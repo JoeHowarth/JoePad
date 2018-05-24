@@ -50,7 +50,7 @@ const SideBar = (props) => {
   const NoteArr = _.map(notes, n => (
     <Note note={n} onClick={e => onClickNote(e, n.id)}  key={n.id}/>
   ));
-  
+
   return (
     <div className={classes.root}>
       <Drawer
@@ -63,6 +63,7 @@ const SideBar = (props) => {
         <List>
           <NewNote onNewNote={onNewNote}/>
           <ActionItem icon={AddIcon} text='Delete' onClick={props.onDeleteNote}/>
+          <ActionItem icon={AddIcon} text='Refresh' onClick={props.onRefresh}/>
           <Divider/>
           {NoteArr}
         </List>

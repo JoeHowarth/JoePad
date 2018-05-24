@@ -7,7 +7,9 @@ import SideBar from './components/side-bar';
 import _ from 'lodash';
 import shortid from 'shortid';
 import exNotes from './data/ex-notes';
+import axios from 'axios';
 
+const apiURL = 'http://localhost:3000/users/'
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -28,6 +30,25 @@ class App extends React.Component {
       currID: exNotes[0].id,
       notes: notes,
     }
+
+  }
+
+  componentWillMount() {
+    axios.get(apiURL)
+      .then(res => {
+        console.log("in get cb");
+        console.log(res.data);
+        // console.log(Object.keys(res.data[0]));
+        console.log(this.state);
+        this.setState({
+          notes: res.data,
+          currID: Object.keys(res.data)[0]
+        })
+      })
+      .catch(res => {
+        console.log("in error section");
+        console.log(res);
+      })
   }
 
   onType = (e) => {
@@ -36,6 +57,8 @@ class App extends React.Component {
     this.setState({
       notes: notes
     })
+    axios.put(apiURL,{note: notes[currID]})
+
   }
 
   onClickNote = (e, id) => {
@@ -47,13 +70,17 @@ class App extends React.Component {
 
   onDeleteNote = () => {
     const id = this.state.currID;
-    console.log(id);
-    let notes = _.clone(this.state.notes)
-    delete notes[id]
-    this.setState({
-      notes: notes,
-      currID: Object.keys(notes)[0]
-     })
+    axios.delete(apiURL, {params: {id: id}})
+      .then(res => {
+        this.setState({
+          notes: res.data,
+          currID: Object.keys(res.data)[0]
+        })
+      })
+      .catch(res => {
+        console.log("in error section");
+        console.log(res);
+      })
   }
 
   onNewNote = (title) => {
@@ -64,29 +91,50 @@ class App extends React.Component {
       title: title,
       text: '',
     }
-    notes[id] = newNote
+    axios.post(apiURL, {note: newNote})
+      .then(res => {
+        this.setState({
+          notes: res.data,
+          currID: id,
+        })
+      })
+  }
 
-    this.setState({
-      notes: notes,
-      currID: id
-    })
+  onRefresh = () => {
+    axios.get(apiURL)
+      .then(res => {
+        this.setState({
+          notes: res.data,
+        })
+      })
+      .catch(res => {
+        console.log("in error section");
+        console.log(res);
+      })
   }
 
   render() {
     const { classes } = this.props;
     const { currID, notes } = this.state;
-
+    console.log('render');
+    let text;
+    if (Object.keys(notes).length == 0) {
+      text = ''
+    } else {
+      text = notes[currID].text
+    }
     return (
       <div className={classes.root}>
           <SideBar
             notes={this.state.notes}
             onClickNote={this.onClickNote}
             onDeleteNote={this.onDeleteNote}
+            onRefresh={this.onRefresh}
             onNewNote={this.onNewNote}
           />
           <NoteView
             onType={this.onType}
-            noteText={notes[currID].text}
+            noteText={text}
           />
       </div>
     );

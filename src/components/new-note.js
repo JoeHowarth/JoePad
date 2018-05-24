@@ -46,7 +46,6 @@ class NewNote extends React.Component {
   };
 
   render() {
-    console.log(AddIcon);
     return (
       <div>
 
