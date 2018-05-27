@@ -25,9 +25,18 @@ export default class FormDialog extends React.Component {
               autoFocus
               margin="dense"
               id="name"
-              label="Title"
+              label="Username"
               type="text"
-              onChange={this.props.onTitleChange}
+              onChange={this.props.onUsernameChange}
+              fullWidth
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="password"
+              label="Password"
+              type="text"
+              onChange={this.props.onPasswordChange}
               fullWidth
             />
           </DialogContent>

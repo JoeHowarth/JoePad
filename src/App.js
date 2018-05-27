@@ -9,7 +9,10 @@ import shortid from 'shortid';
 import exNotes from './data/ex-notes';
 import axios from 'axios';
 
-const apiURL = 'http://localhost:3000/users/'
+axios.defaults.withCredentials = true;
+const url = 'http://localhost:4000/'
+const loginURL = url + 'login';
+const apiURL = url + 'users/'
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -34,21 +37,21 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    axios.get(apiURL)
-      .then(res => {
-        console.log("in get cb");
-        console.log(res.data);
-        // console.log(Object.keys(res.data[0]));
-        console.log(this.state);
-        this.setState({
-          notes: res.data,
-          currID: Object.keys(res.data)[0]
-        })
-      })
-      .catch(res => {
-        console.log("in error section");
-        console.log(res);
-      })
+    // axios.get(apiURL)
+    //   .then(res => {
+    //     // console.log("in get cb");
+    //     // console.log(res.data);
+    //     // console.log(Object.keys(res.data[0]));
+    //     // console.log(this.state);
+    //     this.setState({
+    //       notes: res.data,
+    //       currID: Object.keys(res.data)[0]
+    //     })
+    //   })
+    //   .catch(res => {
+    //     console.log("in error section");
+    //     console.log(res);
+    //   })
   }
 
   onType = (e) => {
@@ -101,8 +104,11 @@ class App extends React.Component {
   }
 
   onRefresh = () => {
-    axios.get(apiURL)
+    axios.get(apiURL,
+      {withCredentials: true}
+    )
       .then(res => {
+        console.log(res.data);
         this.setState({
           notes: res.data,
         })
@@ -113,12 +119,24 @@ class App extends React.Component {
       })
   }
 
+  onLogin = ({username, password}) => {
+    axios.post(url + 'login/', {
+      username,
+      password
+    }).then(res => {
+      console.log(res);
+    }).catch( res => {
+      console.log("ERROR ---");
+      console.log(res);
+    })
+  }
+
   render() {
     const { classes } = this.props;
     const { currID, notes } = this.state;
-    console.log('render');
+    console.log('render state',this.state);
     let text;
-    if (Object.keys(notes).length == 0) {
+    if (Object.keys(notes).length === 0) {
       text = ''
     } else {
       text = notes[currID].text
@@ -126,6 +144,7 @@ class App extends React.Component {
     return (
       <div className={classes.root}>
           <SideBar
+            onLogin={this.onLogin}
             notes={this.state.notes}
             onClickNote={this.onClickNote}
             onDeleteNote={this.onDeleteNote}
