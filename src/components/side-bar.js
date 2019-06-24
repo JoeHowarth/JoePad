@@ -70,7 +70,11 @@ const SideBar = (props) => {
         <TitleGroup/>
         <Divider/>
         <List>
-          <LoginItem onLogin={onLogin}/>
+          <LoginItem
+            onLogin={onLogin}
+            loggedIn={props.loggedIn}
+            username={props.username}
+          />
           <NewNote onNewNote={onNewNote}/>
           <ActionItem icon={AddIcon} text='Delete' onClick={props.onDeleteNote}/>
           <ActionItem icon={AddIcon} text='Refresh' onClick={props.onRefresh}/>

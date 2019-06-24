@@ -4,32 +4,26 @@ import PropTypes from 'prop-types';
 
 import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
-import FormDialog from './form-dialog';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+
+import TextField from '@material-ui/core/TextField';
+
+import FormDialogItem from './form-dialog-item';
 import ActionItem from './dumb/action-item';
 import _ from 'lodash';
 const styles = (theme) => ({})
 
-class NewNote extends React.Component {
-  state = {
-    open: false,
-    noteTitle: "untitled",
-  };
-
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleCancel = () => {
-    this.setState({ open: false });
-  };
-
-  handleSubmit = () => {
-    let {username, password} = this.state;
-
-    this.props.onLogin({username, password})
-    this.setState({ open: false })
-  };
-
+class Login extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
   onUsernameChange = e => {
     this.setState({ username: e.target.value });
   }
@@ -38,41 +32,45 @@ class NewNote extends React.Component {
     this.setState({ password: e.target.value });
   }
 
-  onEnterUp = e => {
-    if (e.key === 'Enter')
-      this.handleSubmit()
+  handleLoginSubmit = async () => {
+    let {username, password} = this.state;
+
+    this.props.onLogin({username, password})
+
   };
-
-  render() {
+  render () {
     return (
-      <div>
-
-
-        <ActionItem
-          onClick={this.handleClickOpen}
-          icon={ AddIcon }
-          text="Login"
-        />
-        <FormDialog
-          open={this.state.open}
-          handleCancel={this.handleCancel}
-          handleSubmit={this.handleSubmit}
-          onPasswordChange={this.onPasswordChange}
-          onUsernameChange={this.onUsernameChange}
-          titleRef={this.titleRef}
-          onKeyUp={this.onEnterUp}
-        />
-      </div>
+      <FormDialogItem
+        formTitle="Login Info"
+        handleSubmit={this.handleLoginSubmit}
+      >
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Username"
+            type="text"
+            onChange={this.onUsernameChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            id="password"
+            label="Password"
+            type="text"
+            onChange={this.onPasswordChange}
+            fullWidth
+          />
+        </DialogContent>
+      </FormDialogItem>
     )
   }
 }
-// <ListItem button onClick={this.handleClickOpen}>
-//   <ListItemIcon >
-//     <AddIcon />
-//   </ListItemIcon>
-//   <ListItemText primary="New Note"/>
-// </ListItem>
+
+
+
 
 
 // export default SideBar;
-export default withStyles(styles)(NewNote);
+export default withStyles(styles)(Login);

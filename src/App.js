@@ -32,26 +32,10 @@ class App extends React.Component {
     this.state = {
       currID: exNotes[0].id,
       notes: notes,
+      loggedIn: false,
+      username: '',
     }
 
-  }
-
-  componentWillMount() {
-    // axios.get(apiURL)
-    //   .then(res => {
-    //     // console.log("in get cb");
-    //     // console.log(res.data);
-    //     // console.log(Object.keys(res.data[0]));
-    //     // console.log(this.state);
-    //     this.setState({
-    //       notes: res.data,
-    //       currID: Object.keys(res.data)[0]
-    //     })
-    //   })
-    //   .catch(res => {
-    //     console.log("in error section");
-    //     console.log(res);
-    //   })
   }
 
   onType = (e) => {
@@ -104,9 +88,7 @@ class App extends React.Component {
   }
 
   onRefresh = () => {
-    axios.get(apiURL,
-      {withCredentials: true}
-    )
+    axios.get(apiURL)
       .then(res => {
         console.log(res.data);
         this.setState({
@@ -124,7 +106,15 @@ class App extends React.Component {
       username,
       password
     }).then(res => {
-      console.log(res);
+      let {username, notes} = res.data
+      console.log(username, notes);
+      this.setState({
+        loggedIn: true,
+        username: username,
+        notes: notes,
+        currID: Object.keys(notes)[0]
+      })
+      // console.log(res);
     }).catch( res => {
       console.log("ERROR ---");
       console.log(res);
@@ -144,6 +134,8 @@ class App extends React.Component {
     return (
       <div className={classes.root}>
           <SideBar
+            loggedIn={this.state.loggedIn}
+            username={this.state.username}
             onLogin={this.onLogin}
             notes={this.state.notes}
             onClickNote={this.onClickNote}
